@@ -1,8 +1,9 @@
 package storm.kafka.bolt;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class BoltConfig {
+public class BoltConfig implements Serializable {
     public String topic;
 
     public Map properties;
