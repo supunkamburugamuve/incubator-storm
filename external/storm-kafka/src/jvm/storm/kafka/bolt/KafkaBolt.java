@@ -66,7 +66,7 @@ public class KafkaBolt<K, V> extends BaseRichBolt {
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
-        if (boltConfig != null) {
+        if (boltConfig == null) {
             Map configMap = (Map) stormConf.get(KAFKA_BROKER_PROPERTIES);
             Properties properties = new Properties();
             properties.putAll(configMap);
