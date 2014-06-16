@@ -55,14 +55,34 @@ public class KafkaBolt<K, V> extends BaseRichBolt {
     private OutputCollector collector;
     private String topic;
 
+    private BoltConfig boltConfig;
+
+    public KafkaBolt(BoltConfig boltConfig) {
+        this.boltConfig = boltConfig;
+    }
+
+    public KafkaBolt() {
+    }
+
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
-        Map configMap = (Map) stormConf.get(KAFKA_BROKER_PROPERTIES);
-        Properties properties = new Properties();
-        properties.putAll(configMap);
-        ProducerConfig config = new ProducerConfig(properties);
-        producer = new Producer<K, V>(config);
-        this.topic = (String) stormConf.get(TOPIC);
+        if (boltConfig != null) {
+            Map configMap = (Map) stormConf.get(KAFKA_BROKER_PROPERTIES);
+            Properties properties = new Properties();
+            properties.putAll(configMap);
+            ProducerConfig config = new ProducerConfig(properties);
+            producer = new Producer<K, V>(config);
+            this.topic = (String) stormConf.get(TOPIC);
+        } else {
+            Properties properties = new Properties();
+            if (boltConfig.properties != null) {
+                properties.putAll(boltConfig.properties);
+            }
+            ProducerConfig config = new ProducerConfig(properties);
+            producer = new Producer<K, V>(config);
+            this.topic = boltConfig.topic;
+        }
+
         this.collector = collector;
     }
 
